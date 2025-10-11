@@ -31,8 +31,6 @@ CommUnity is an event-sharing platform where users can **create, discover, and s
 
 ## ✨ Features
 
-### ✅ Implemented (Phase 1 & 2 - 100% Complete)
-
 #### 🏠 **Home Screen**
 
 - Featured events showcase
