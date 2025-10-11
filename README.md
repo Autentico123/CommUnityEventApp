@@ -152,14 +152,6 @@ npm run web        # Web browser
 - **Sharing**: Expo Sharing
 - **Maps**: Map Placeholder (Expo Go compatible)
 
-### Upcoming (Phase 4)
-
-- **Backend**: Node.js + Express.js
-- **Database**: MongoDB (Mongoose ODM)
-- **Auth**: JWT (JSON Web Token)
-- **Real-time**: Socket.io
-- **Storage**: Cloudinary / Firebase
-
 ## 🌟 Show Your Support
 
 If you like this project, please give it a ⭐️!
