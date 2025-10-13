@@ -26,7 +26,7 @@ export default function ProfileScreen() {
         <Text style={styles.userBio}>Event enthusiast • Community builder</Text>
       </View>
 
-      {/* Stats */}
+      {/* Status */}
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statNumber}>12</Text>
