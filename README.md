@@ -1,20 +1,4 @@
-# 📱 CommUnity - Event Sharing App
-
-<div align="center">
-
-![CommUnity Logo](./assets/icon.png)
-
-**A community-focused event sharing platform built with React Native & Expo**
-
-[![React Native](https://img.shields.io/badge/React%20Native-0.81-blue.svg)](https://reactnative.dev/)
-[![Expo](https://img.shields.io/badge/Expo-~54.0-black.svg)](https://expo.dev/)
-[![License](https://img.shields.io/badge/License-0BSD-green.svg)](LICENSE)
-
-[Features](#-features) • [Installation](#-installation) • [Screenshots](#-screenshots) • [Documentation](#-documentation) • [Roadmap](#-roadmap)
-
-</div>
-
----
+# 📱 CommUnity - Event Sharing App (GROUP 2)
 
 ## 📖 About
 
@@ -98,12 +82,6 @@ npm install
 npm start
 ```
 
-### Detailed Setup
-
-For detailed installation instructions, see [CLONE_SETUP_GUIDE.md](./CLONE_SETUP_GUIDE.md)
-
----
-
 ## 📱 Running the App
 
 ### On Your Phone (Recommended)
@@ -120,35 +98,6 @@ npm run android    # Android emulator
 npm run ios        # iOS simulator (macOS only)
 npm run web        # Web browser
 ```
-
----
-
-## 📸 Screenshots
-
-<div align="center">
-
-| Home Screen                           | Events List                               | Event Details                               |
-| ------------------------------------- | ----------------------------------------- | ------------------------------------------- |
-| ![Home](./assets/screenshot-home.png) | ![Events](./assets/screenshot-events.png) | ![Details](./assets/screenshot-details.png) |
-
-| Create Event                              | Profile                                     | Calendar Integration                          |
-| ----------------------------------------- | ------------------------------------------- | --------------------------------------------- |
-| ![Create](./assets/screenshot-create.png) | ![Profile](./assets/screenshot-profile.png) | ![Calendar](./assets/screenshot-calendar.png) |
-
-</div>
-
----
-
-## 🛠 Tech Stack
-
-### Frontend (Mobile)
-
-- **Framework**: React Native (Expo)
-- **Navigation**: React Navigation (Stack + Tab)
-- **Storage**: AsyncStorage
-- **Calendar**: Expo Calendar
-- **Sharing**: Expo Sharing
-- **Maps**: Map Placeholder (Expo Go compatible)
 
 ## 🌟 Show Your Support
 
