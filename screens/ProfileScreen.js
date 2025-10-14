@@ -11,7 +11,7 @@ import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container}>
-      {/* Profile Header */}
+      {/* Profile_Header */}
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
           <View style={styles.avatar}>
@@ -26,7 +26,7 @@ export default function ProfileScreen() {
         <Text style={styles.userBio}>Event enthusiast • Community builder</Text>
       </View>
 
-      {/* Stats */}
+      {/* Status */}
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statNumber}>12</Text>
