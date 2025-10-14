@@ -12,6 +12,7 @@ export default function App() {
         <MainNavigator />
         <StatusBar style="light" backgroundColor={colors.primary} />
       </NavigationContainer>
+      
     </GestureHandlerRootView>
   );
 }
