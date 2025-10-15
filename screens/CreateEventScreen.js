@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function CreateEventScreen({ navigation }) {
@@ -91,7 +92,7 @@ export default function CreateEventScreen({ navigation }) {
       createdAt: new Date().toISOString(),
     };
 
-    Alert.alert("Success! 🎉", "Your event has been created successfully!", [
+    Alert.alert("Success!", "Your event has been created successfully!", [
       {
         text: "View Event",
         onPress: () => navigation.navigate("EventDetails", { event: newEvent }),
@@ -175,7 +176,12 @@ export default function CreateEventScreen({ navigation }) {
             style={styles.dateTimeButton}
             onPress={() => setShowDatePicker(true)}
           >
-            <Text style={styles.dateTimeIcon}>📅</Text>
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={colors.primary}
+              style={styles.dateTimeIcon}
+            />
             <Text style={styles.dateTimeText}>{formatDate(date)}</Text>
           </TouchableOpacity>
         </View>
@@ -197,7 +203,12 @@ export default function CreateEventScreen({ navigation }) {
             style={styles.dateTimeButton}
             onPress={() => setShowTimePicker(true)}
           >
-            <Text style={styles.dateTimeIcon}>🕐</Text>
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={colors.primary}
+              style={styles.dateTimeIcon}
+            />
             <Text style={styles.dateTimeText}>{formatTime(time)}</Text>
           </TouchableOpacity>
         </View>
@@ -346,7 +357,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   dateTimeIcon: {
-    fontSize: 20,
     marginRight: spacing.sm,
   },
   dateTimeText: {

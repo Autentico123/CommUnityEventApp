@@ -1,7 +1,7 @@
 import React from "react";
-import { Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, typography } from "../theme";
 
 // Import screens
@@ -70,7 +70,11 @@ export default function MainNavigator() {
         component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="🏠" focused={focused} />
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -79,7 +83,11 @@ export default function MainNavigator() {
         component={EventsStackNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="🎉" focused={focused} />
+            <Ionicons
+              name={focused ? "calendar" : "calendar-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -88,25 +96,14 @@ export default function MainNavigator() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="👤" focused={focused} />
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
     </Tab.Navigator>
   );
 }
-
-// Custom Tab Icon Component
-const TabIcon = ({ icon, focused }) => {
-  return (
-    <Text
-      style={{
-        fontSize: 24,
-        opacity: focused ? 1 : 0.5,
-        transform: [{ scale: focused ? 1.1 : 1 }],
-      }}
-    >
-      {icon}
-    </Text>
-  );
-};

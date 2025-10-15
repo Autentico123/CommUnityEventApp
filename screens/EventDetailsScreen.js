@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import * as Calendar from "expo-calendar";
 import * as Sharing from "expo-sharing";
+import { Ionicons } from "@expo/vector-icons";
 // MapView removed - not compatible with Expo Go
 // import MapView, { Marker } from "react-native-maps";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
@@ -69,7 +70,7 @@ export default function EventDetailsScreen({ route, navigation }) {
       });
 
       if (eventId) {
-        Alert.alert("Success! 📅", "Event added to your calendar");
+        Alert.alert("Success!", "Event added to your calendar");
       }
     } catch (error) {
       console.error("Calendar error:", error);
@@ -80,13 +81,13 @@ export default function EventDetailsScreen({ route, navigation }) {
   const handleShare = async () => {
     try {
       const shareMessage = `
-🎉 Join me at ${event.title}!
+Join me at ${event.title}!
 
-📅 When: ${event.date} at ${event.time}
-📍 Where: ${event.location}
-${event.description ? `\n📝 ${event.description}` : ""}
+When: ${event.date} at ${event.time}
+Where: ${event.location}
+${event.description ? `\n${event.description}` : ""}
 
-See you there! 🎊
+See you there!
       `.trim();
 
       if (Platform.OS === "web") {
@@ -162,7 +163,11 @@ See you there! 🎊
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Event Details</Text>
         <TouchableOpacity onPress={toggleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
+          <Ionicons
+            name={isSaved ? "heart" : "heart-outline"}
+            size={28}
+            color={colors.surface}
+          />
         </TouchableOpacity>
       </View>
 
@@ -182,7 +187,12 @@ See you there! 🎊
         {/* Event Info Cards */}
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>📅</Text>
+            <Ionicons
+              name="calendar-outline"
+              size={24}
+              color={colors.primary}
+              style={styles.infoIcon}
+            />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Date</Text>
               <Text style={styles.infoValue}>{event.date}</Text>
@@ -192,7 +202,12 @@ See you there! 🎊
 
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>🕐</Text>
+            <Ionicons
+              name="time-outline"
+              size={24}
+              color={colors.primary}
+              style={styles.infoIcon}
+            />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Time</Text>
               <Text style={styles.infoValue}>{event.time}</Text>
@@ -202,7 +217,12 @@ See you there! 🎊
 
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}>📍</Text>
+            <Ionicons
+              name="location-outline"
+              size={24}
+              color={colors.primary}
+              style={styles.infoIcon}
+            />
             <View style={styles.infoTextContainer}>
               <Text style={styles.infoLabel}>Location</Text>
               <Text style={styles.infoValue}>{event.location}</Text>
@@ -220,7 +240,12 @@ See you there! 🎊
         <View style={styles.mapContainer}>
           <Text style={styles.sectionTitle}>Location on Map</Text>
           <View style={styles.mapPlaceholder}>
-            <Text style={styles.mapIcon}>📍</Text>
+            <Ionicons
+              name="location"
+              size={48}
+              color={colors.primary}
+              style={styles.mapIconLarge}
+            />
             <Text style={styles.mapPlaceholderText}>{event.location}</Text>
             <Text style={styles.mapNote}>
               Map view available in development build
@@ -248,7 +273,12 @@ See you there! 🎊
             style={styles.primaryButton}
             onPress={handleSaveToCalendar}
           >
-            <Text style={styles.buttonIcon}>📅</Text>
+            <Ionicons
+              name="calendar"
+              size={20}
+              color={colors.surface}
+              style={styles.buttonIcon}
+            />
             <Text style={styles.primaryButtonText}>Add to Calendar</Text>
           </TouchableOpacity>
 
@@ -256,12 +286,22 @@ See you there! 🎊
             style={styles.secondaryButton}
             onPress={handleShare}
           >
-            <Text style={styles.buttonIcon}>📤</Text>
+            <Ionicons
+              name="share-outline"
+              size={20}
+              color={colors.surface}
+              style={styles.buttonIcon}
+            />
             <Text style={styles.secondaryButtonText}>Share Event</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.outlineButton}>
-            <Text style={styles.buttonIcon}>✅</Text>
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={20}
+              color={colors.primary}
+              style={styles.buttonIcon}
+            />
             <Text style={styles.outlineButtonText}>I'm Attending</Text>
           </TouchableOpacity>
         </View>
@@ -309,9 +349,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  saveButtonText: {
-    fontSize: 24,
-  },
   content: {
     flex: 1,
   },
@@ -351,7 +388,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoIcon: {
-    fontSize: 24,
     marginRight: spacing.md,
   },
   infoTextContainer: {
@@ -403,8 +439,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderStyle: "dashed",
   },
-  mapIcon: {
-    fontSize: 48,
+  mapIconLarge: {
     marginBottom: spacing.sm,
   },
   mapPlaceholderText: {
@@ -472,7 +507,6 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   buttonIcon: {
-    fontSize: 18,
     marginRight: spacing.sm,
   },
   primaryButtonText: {
