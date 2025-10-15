@@ -32,15 +32,27 @@ export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container}>
       {/* Profile Header */}
-      <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>👤</Text>
-          </View>
-          <TouchableOpacity style={styles.editAvatarButton}>
-            <Text style={styles.editAvatarText}>✏️</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.headerBackground} />
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.settingsButton}>
+            <Ionicons
+              name="settings-outline"
+              size={20}
+              color={colors.surface}
+            />
           </TouchableOpacity>
-        </View>
+
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <View style={styles.avatarGradient}>
+                <Ionicons name="person" size={50} color={colors.primary} />
+              </View>
+            </View>
+            <TouchableOpacity style={styles.editAvatarButton}>
+              <Ionicons name="camera" size={18} color={colors.surface} />
+            </TouchableOpacity>
+          </View>
 
           <Text style={styles.userName}>John Doe</Text>
           <Text style={styles.userBio}>
