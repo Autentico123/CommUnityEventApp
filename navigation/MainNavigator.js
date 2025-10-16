@@ -1,10 +1,11 @@
 import React from "react";
-import { Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, typography } from "../theme";
 
-// Import screens
 import HomeScreen from "../screens/HomeScreen";
 import EventsScreen from "../screens/EventsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -14,7 +15,6 @@ import EventDetailsScreen from "../screens/EventDetailsScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Events Stack Navigator
 function EventsStackNavigator() {
   return (
     <Stack.Navigator
@@ -29,7 +29,6 @@ function EventsStackNavigator() {
   );
 }
 
-// Home Stack Navigator
 function HomeStackNavigator() {
   return (
     <Stack.Navigator
@@ -45,6 +44,8 @@ function HomeStackNavigator() {
 }
 
 export default function MainNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -55,13 +56,22 @@ export default function MainNavigator() {
           backgroundColor: colors.surface,
           borderTopWidth: 1,
           borderTopColor: colors.border,
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+          paddingTop: 8,
+          height: 60 + (insets.bottom > 0 ? insets.bottom : 10),
+          paddingHorizontal: 10,
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
         tabBarLabelStyle: {
           fontSize: typography.fontSize.xs,
           fontWeight: typography.fontWeight.medium,
+          marginBottom: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: 2,
         },
       }}
     >
@@ -70,7 +80,11 @@ export default function MainNavigator() {
         component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="🏠" focused={focused} />
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -79,7 +93,11 @@ export default function MainNavigator() {
         component={EventsStackNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="🎉" focused={focused} />
+            <Ionicons
+              name={focused ? "calendar" : "calendar-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -88,25 +106,14 @@ export default function MainNavigator() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused, color }) => (
-            <TabIcon icon="👤" focused={focused} />
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
     </Tab.Navigator>
   );
 }
-
-// Custom Tab Icon Component
-const TabIcon = ({ icon, focused }) => {
-  return (
-    <Text
-      style={{
-        fontSize: 24,
-        opacity: focused ? 1 : 0.5,
-        transform: [{ scale: focused ? 1.1 : 1 }],
-      }}
-    >
-      {icon}
-    </Text>
-  );
-};
