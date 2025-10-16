@@ -1,3 +1,4 @@
+// navigation/MainNavigator.js
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -11,17 +12,22 @@ import ProfileScreen from "../screens/ProfileScreen";
 import CreateEventScreen from "../screens/CreateEventScreen";
 import EventDetailsScreen from "../screens/EventDetailsScreen";
 
+// Extra screens for Profile features
+import SavedEventsScreen from "../screens/SavedEventsScreen";
+import MyEventsScreen from "../screens/MyEventsScreen";
+import CalendarScreen from "../screens/CalendarScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import HelpSupportScreen from "../screens/HelpSupportScreen";
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Events Stack Navigator
+//
+// 🔹 Events Stack
+//
 function EventsStackNavigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="EventsList" component={EventsScreen} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
       <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
@@ -29,14 +35,12 @@ function EventsStackNavigator() {
   );
 }
 
-// Home Stack Navigator
+//
+// 🔹 Home Stack
+//
 function HomeStackNavigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
       <Stack.Screen name="CreateEvent" component={CreateEventScreen} />
@@ -44,6 +48,35 @@ function HomeStackNavigator() {
   );
 }
 
+//
+// 🔹 Profile Stack — this is new!
+//
+function ProfileStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: "#fff",
+      }}
+    >
+      <Stack.Screen
+        name="ProfileMain"
+        component={ProfileScreen}
+        options={{ title: "My Profile" }}
+      />
+      <Stack.Screen name="SavedEvents" component={SavedEventsScreen} />
+      <Stack.Screen name="MyEvents" component={MyEventsScreen} />
+      <Stack.Screen name="Calendar" component={CalendarScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+    </Stack.Navigator>
+  );
+}
+
+//
+// 🔹 Main Tab Navigator
+//
 export default function MainNavigator() {
   return (
     <Tab.Navigator
@@ -65,6 +98,7 @@ export default function MainNavigator() {
         },
       }}
     >
+      {/* 🏠 Home */}
       <Tab.Screen
         name="Home"
         component={HomeStackNavigator}
@@ -78,6 +112,8 @@ export default function MainNavigator() {
           ),
         }}
       />
+
+      {/* 📅 Events */}
       <Tab.Screen
         name="Events"
         component={EventsStackNavigator}
@@ -91,9 +127,11 @@ export default function MainNavigator() {
           ),
         }}
       />
+
+      {/* 👤 Profile (now a stack) */}
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
