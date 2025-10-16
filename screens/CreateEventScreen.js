@@ -63,7 +63,6 @@ export default function CreateEventScreen({ navigation }) {
   };
 
   const handleCreateEvent = () => {
-    // Validation
     if (!title.trim()) {
       Alert.alert("Error", "Please enter an event title");
       return;
@@ -73,7 +72,6 @@ export default function CreateEventScreen({ navigation }) {
       return;
     }
 
-    // Create event object
     const newEvent = {
       id: Date.now().toString(),
       title: title.trim(),

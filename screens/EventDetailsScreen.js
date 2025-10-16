@@ -12,15 +12,12 @@ import {
 import * as Calendar from "expo-calendar";
 import * as Sharing from "expo-sharing";
 import { Ionicons } from "@expo/vector-icons";
-// MapView removed - not compatible with Expo Go
-// import MapView, { Marker } from "react-native-maps";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function EventDetailsScreen({ route, navigation }) {
   const { event } = route.params;
   const [isSaved, setIsSaved] = useState(false);
 
-  // Default map location (can be enhanced with geocoding)
   const [mapRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
@@ -30,7 +27,6 @@ export default function EventDetailsScreen({ route, navigation }) {
 
   const handleSaveToCalendar = async () => {
     try {
-      // Request calendar permissions
       const { status } = await Calendar.requestCalendarPermissionsAsync();
 
       if (status !== "granted") {
@@ -41,7 +37,6 @@ export default function EventDetailsScreen({ route, navigation }) {
         return;
       }
 
-      // Get the default calendar
       const calendars = await Calendar.getCalendarsAsync(
         Calendar.EntityTypes.EVENT
       );
@@ -54,19 +49,17 @@ export default function EventDetailsScreen({ route, navigation }) {
         return;
       }
 
-      // Parse the event date and time
       const eventDateTime = event.dateTime || new Date();
       const endDateTime = new Date(eventDateTime);
-      endDateTime.setHours(endDateTime.getHours() + 2); // Default 2 hour duration
+      endDateTime.setHours(endDateTime.getHours() + 2);
 
-      // Create calendar event
       const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
         title: event.title,
         startDate: eventDateTime,
         endDate: endDateTime,
         location: event.location,
         notes: event.description,
-        alarms: [{ relativeOffset: -60 }], // 1 hour before
+        alarms: [{ relativeOffset: -60 }],
       });
 
       if (eventId) {
@@ -91,23 +84,19 @@ See you there!
       `.trim();
 
       if (Platform.OS === "web") {
-        // Web share API
         if (navigator.share) {
           await navigator.share({
             title: event.title,
             text: shareMessage,
           });
         } else {
-          // Fallback: copy to clipboard
           Alert.alert("Share Event", shareMessage, [
             { text: "OK", onPress: () => {} },
           ]);
         }
       } else {
-        // Mobile: Use native share
         const isAvailable = await Sharing.isAvailableAsync();
         if (isAvailable) {
-          // For demo, we'll use Alert as actual file sharing needs a file
           Alert.alert("Share Event", "Choose how to share:", [
             {
               text: "Message",
@@ -153,7 +142,6 @@ See you there!
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -172,7 +160,6 @@ See you there!
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Event Badge */}
         <View style={styles.badgeContainer}>
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryBadgeText}>
@@ -181,10 +168,8 @@ See you there!
           </View>
         </View>
 
-        {/* Event Title */}
         <Text style={styles.title}>{event.title}</Text>
 
-        {/* Event Info Cards */}
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
             <Ionicons
@@ -236,7 +221,6 @@ See you there!
           </View>
         </View>
 
-        {/* Map View - Placeholder for Expo Go */}
         <View style={styles.mapContainer}>
           <Text style={styles.sectionTitle}>Location on Map</Text>
           <View style={styles.mapPlaceholder}>
@@ -259,7 +243,6 @@ See you there!
           </View>
         </View>
 
-        {/* Description */}
         {event.description && (
           <View style={styles.descriptionContainer}>
             <Text style={styles.sectionTitle}>About This Event</Text>
@@ -267,7 +250,6 @@ See you there!
           </View>
         )}
 
-        {/* Action Buttons */}
         <View style={styles.actionsContainer}>
           <TouchableOpacity
             style={styles.primaryButton}

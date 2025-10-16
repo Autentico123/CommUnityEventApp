@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
@@ -31,7 +33,6 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Profile Header */}
       <View style={styles.headerContainer}>
         <View style={styles.headerBackground} />
         <View style={styles.header}>
@@ -54,7 +55,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.userName}>John Doe</Text>
+          <Text style={styles.userName}>Vincent Autentico</Text>
           <Text style={styles.userBio}>
             Event enthusiast • Community builder
           </Text>
@@ -68,7 +69,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Stats */}
       <View style={styles.statsContainer}>
         <TouchableOpacity style={styles.statItem}>
           <View
@@ -107,7 +107,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Activity Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recent Activity</Text>
         <View style={styles.activityCard}>
@@ -146,7 +145,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Menu Options */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account</Text>
         <View style={styles.menuContainer}>
@@ -188,7 +186,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Action Buttons */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.primaryButton}>
           <Ionicons
@@ -211,7 +208,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Logout Button */}
       <View style={styles.logoutContainer}>
         <TouchableOpacity style={styles.logoutButton}>
           <Ionicons name="log-out-outline" size={20} color="#FF6B6B" />
@@ -238,19 +234,25 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 280,
     backgroundColor: colors.primary,
     borderBottomLeftRadius: borderRadius.xxl,
     borderBottomRightRadius: borderRadius.xxl,
   },
   header: {
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight + spacing.lg
+        : spacing.xxl,
+    paddingBottom: spacing.xxl,
     alignItems: "center",
   },
   settingsButton: {
     position: "absolute",
-    top: spacing.xl,
+    top:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight + spacing.md
+        : spacing.xl,
     right: spacing.lg,
     width: 40,
     height: 40,
@@ -306,22 +308,25 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.base,
     color: colors.surface,
     textAlign: "center",
-    opacity: 0.9,
+    opacity: 1,
+    fontWeight: typography.fontWeight.medium,
+    paddingHorizontal: spacing.lg,
   },
   badgeContainer: {
     marginTop: spacing.sm,
+    marginBottom: spacing.md,
   },
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "rgba(255,255,255,0.95)",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.round,
     gap: spacing.xs,
   },
   badgeText: {
-    color: colors.surface,
+    color: colors.primary,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
   },

@@ -6,6 +6,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
@@ -14,7 +16,6 @@ export default function EventsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
 
-  // Sample events data with enhanced properties
   const sampleEvents = [
     {
       id: 1,
@@ -56,21 +57,27 @@ export default function EventsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Enhanced Header */}
       <View style={styles.header}>
+        <View style={styles.decorativeCircle} />
+
         <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.headerTitle}>Discover Events</Text>
-            <Text style={styles.headerSubtitle}>
-              {sampleEvents.length} events available
-            </Text>
+          <View style={styles.headerTitleContainer}>
+            <View style={styles.titleIconBox}>
+              <Ionicons name="compass" size={24} color={colors.primary} />
+            </View>
+            <View>
+              <Text style={styles.headerTitle}>Discover Events</Text>
+              <Text style={styles.headerSubtitle}>
+                {sampleEvents.length} events available
+              </Text>
+            </View>
           </View>
           <TouchableOpacity style={styles.filterIconButton}>
-            <Ionicons name="options-outline" size={24} color={colors.primary} />
+            <Ionicons name="options-outline" size={20} color={colors.primary} />
+            <View style={styles.filterNotificationDot} />
           </TouchableOpacity>
         </View>
 
-        {/* Enhanced Search Bar */}
         <View style={styles.searchContainer}>
           <Ionicons
             name="search"
@@ -97,14 +104,13 @@ export default function EventsScreen({ navigation }) {
         </View>
       </View>
 
-      {/* Filter Buttons */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.filterContainer}
         contentContainerStyle={styles.filterContent}
       >
-        {["All", "Community", "Music", "Sports", "Education"].map(
+        {["All", "Community", "Music", "Sports", "Education", "Food"].map(
           (filter, index) => (
             <TouchableOpacity
               key={index}
@@ -114,22 +120,90 @@ export default function EventsScreen({ navigation }) {
               ]}
               onPress={() => setSelectedFilter(filter)}
             >
-              <Text
-                style={[
-                  styles.filterText,
-                  selectedFilter === filter && styles.filterTextActive,
-                ]}
-              >
-                {filter}
-              </Text>
-              {selectedFilter === filter && <View style={styles.filterDot} />}
+              <View style={styles.filterButtonContent}>
+                {filter === "All" && (
+                  <Ionicons
+                    name="apps"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                {filter === "Community" && (
+                  <Ionicons
+                    name="people"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                {filter === "Music" && (
+                  <Ionicons
+                    name="musical-notes"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                {filter === "Sports" && (
+                  <Ionicons
+                    name="football"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                {filter === "Education" && (
+                  <Ionicons
+                    name="school"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                {filter === "Food" && (
+                  <Ionicons
+                    name="restaurant"
+                    size={16}
+                    color={
+                      selectedFilter === filter
+                        ? colors.surface
+                        : colors.primary
+                    }
+                  />
+                )}
+                <Text
+                  style={[
+                    styles.filterText,
+                    selectedFilter === filter && styles.filterTextActive,
+                  ]}
+                >
+                  {filter}
+                </Text>
+              </View>
             </TouchableOpacity>
           )
         )}
       </ScrollView>
 
-      {/* Events List */}
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.sectionTitle}>Upcoming Events</Text>
+
         {sampleEvents.map((event) => (
           <TouchableOpacity
             key={event.id}
@@ -142,7 +216,7 @@ export default function EventsScreen({ navigation }) {
               <TouchableOpacity style={styles.eventHeartButton}>
                 <Ionicons
                   name="heart-outline"
-                  size={20}
+                  size={22}
                   color={colors.surface}
                 />
               </TouchableOpacity>
@@ -151,10 +225,11 @@ export default function EventsScreen({ navigation }) {
             <View style={styles.eventContent}>
               <View style={styles.eventHeader}>
                 <View style={styles.eventCategoryBadge}>
+                  <Ionicons name="pricetag" size={12} color={colors.primary} />
                   <Text style={styles.eventCategoryText}>{event.category}</Text>
                 </View>
                 <View style={styles.attendeesContainer}>
-                  <Ionicons name="people" size={14} color={colors.primary} />
+                  <Ionicons name="people" size={14} color={colors.secondary} />
                   <Text style={styles.attendeesText}>{event.attendees}+</Text>
                 </View>
               </View>
@@ -163,30 +238,38 @@ export default function EventsScreen({ navigation }) {
                 {event.title}
               </Text>
 
+              <Text style={styles.eventDescription} numberOfLines={2}>
+                {event.description}
+              </Text>
+
               <View style={styles.eventDetails}>
                 <View style={styles.eventDetailRow}>
-                  <Ionicons
-                    name="calendar-outline"
-                    size={16}
-                    color={colors.textSecondary}
-                  />
+                  <View style={styles.eventDetailIcon}>
+                    <Ionicons
+                      name="calendar"
+                      size={14}
+                      color={colors.primary}
+                    />
+                  </View>
                   <Text style={styles.eventDetailText}>{event.date}</Text>
                 </View>
                 <View style={styles.eventDetailRow}>
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={colors.textSecondary}
-                  />
+                  <View style={styles.eventDetailIcon}>
+                    <Ionicons name="time" size={14} color={colors.primary} />
+                  </View>
                   <Text style={styles.eventDetailText}>{event.time}</Text>
                 </View>
                 <View style={styles.eventDetailRow}>
-                  <Ionicons
-                    name="location-outline"
-                    size={16}
-                    color={colors.textSecondary}
-                  />
-                  <Text style={styles.eventDetailText}>{event.location}</Text>
+                  <View style={styles.eventDetailIcon}>
+                    <Ionicons
+                      name="location"
+                      size={14}
+                      color={colors.primary}
+                    />
+                  </View>
+                  <Text style={styles.eventDetailText} numberOfLines={1}>
+                    {event.location}
+                  </Text>
                 </View>
               </View>
 
@@ -207,7 +290,6 @@ export default function EventsScreen({ navigation }) {
           </TouchableOpacity>
         ))}
 
-        {/* Floating Action Button for Create Event */}
         <TouchableOpacity
           style={styles.fab}
           onPress={() => navigation.navigate("CreateEvent")}
@@ -229,46 +311,87 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.surface,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight + spacing.md
+        : spacing.xl,
+    paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,
-    borderBottomLeftRadius: borderRadius.lg,
-    borderBottomRightRadius: borderRadius.lg,
-    ...shadows.md,
+    borderBottomLeftRadius: borderRadius.xxl,
+    borderBottomRightRadius: borderRadius.xxl,
+    ...shadows.lg,
+    position: "relative",
+    overflow: "hidden",
+  },
+  decorativeCircle: {
+    position: "absolute",
+    top: -30,
+    right: -30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primaryLight + "20",
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  headerTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    flex: 1,
+  },
+  titleIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primaryLight + "30",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
-    fontSize: typography.fontSize.xxl,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
   },
   headerSubtitle: {
-    fontSize: typography.fontSize.sm,
+    fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    marginTop: spacing.xs,
+    marginTop: spacing.xs / 2,
   },
   filterIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primaryLight + "30",
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primaryLight + "20",
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
+  },
+  filterNotificationDot: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.secondary,
+    borderWidth: 2,
+    borderColor: colors.surface,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.background,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
+    ...shadows.sm,
   },
   searchIcon: {
     marginRight: spacing.sm,
@@ -291,8 +414,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.round,
     backgroundColor: colors.surface,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
+    ...shadows.sm,
+  },
+  filterButtonContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
@@ -300,90 +426,107 @@ const styles = StyleSheet.create({
   filterButtonActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+    ...shadows.md,
   },
   filterText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
     color: colors.text,
+    fontWeight: typography.fontWeight.medium,
   },
   filterTextActive: {
     color: colors.surface,
-  },
-  filterDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.surface,
+    fontWeight: typography.fontWeight.bold,
   },
   content: {
     flex: 1,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+  },
+  sectionTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.xs,
   },
   eventCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    marginBottom: spacing.md,
+    borderRadius: borderRadius.xxl,
+    marginBottom: spacing.lg,
     overflow: "hidden",
     ...shadows.lg,
   },
   eventImagePlaceholder: {
-    height: 140,
-    backgroundColor: colors.primaryLight + "40",
+    height: 160,
+    backgroundColor: colors.primaryLight + "30",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
   eventImageEmoji: {
-    fontSize: 60,
+    fontSize: 70,
   },
   eventHeartButton: {
     position: "absolute",
     top: spacing.md,
     right: spacing.md,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
+    ...shadows.md,
   },
   eventContent: {
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   eventHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
   eventCategoryBadge: {
-    backgroundColor: colors.primaryLight,
-    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.primary + "15",
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.round,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   eventCategoryText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: colors.surface,
+    color: colors.primary,
   },
   attendeesContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
+    backgroundColor: colors.secondary + "15",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.sm,
   },
   attendeesText: {
     fontSize: typography.fontSize.xs,
-    color: colors.primary,
+    color: colors.secondary,
     fontWeight: typography.fontWeight.bold,
   },
   eventTitle: {
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
+    marginBottom: spacing.sm,
+    lineHeight: typography.fontSize.xl * 1.3,
+  },
+  eventDescription: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
     marginBottom: spacing.md,
-    lineHeight: typography.fontSize.lg * 1.3,
+    lineHeight: typography.fontSize.sm * 1.5,
   },
   eventDetails: {
     gap: spacing.sm,
@@ -394,15 +537,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
   },
+  eventDetailIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary + "15",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   eventDetailText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary,
+    color: colors.text,
     flex: 1,
+    fontWeight: typography.fontWeight.medium,
   },
   eventFooter: {
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: spacing.sm,
+    borderTopColor: colors.divider,
+    paddingTop: spacing.md,
+    marginTop: spacing.xs,
   },
   viewDetailsButton: {
     flexDirection: "row",

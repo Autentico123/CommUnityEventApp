@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   LinearGradient,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
@@ -23,24 +25,42 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Enhanced Header with Gradient */}
       <View style={styles.headerContainer}>
+        <View style={styles.decorativeCircle1} />
+        <View style={styles.decorativeCircle2} />
+
         <View style={styles.header}>
           <View style={styles.headerTop}>
-            <View>
-              <Text style={styles.greeting}>Hello! 👋</Text>
-              <Text style={styles.headerTitle}>CommUnity</Text>
-            </View>
-            <TouchableOpacity style={styles.notificationButton}>
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color={colors.surface}
-              />
-              <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>3</Text>
+            <View style={styles.headerLeft}>
+              <View style={styles.logoContainer}>
+                <View style={styles.logoCircle}>
+                  <Ionicons name="people" size={24} color={colors.surface} />
+                </View>
               </View>
-            </TouchableOpacity>
+              <View>
+                <Text style={styles.greeting}>Hello! 👋</Text>
+                <Text style={styles.headerTitle}>CommUnity</Text>
+              </View>
+            </View>
+            <View style={styles.headerRight}>
+              <TouchableOpacity style={styles.searchButton}>
+                <Ionicons
+                  name="search-outline"
+                  size={20}
+                  color={colors.surface}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.notificationButton}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={20}
+                  color={colors.surface}
+                />
+                <View style={styles.notificationBadge}>
+                  <Text style={styles.notificationBadgeText}>3</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
           <Text style={styles.headerSubtitle}>
             Discover amazing events near you
@@ -49,38 +69,51 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <View style={styles.content}>
-        {/* Quick Stats Cards */}
         <View style={styles.statsRow}>
-          <View
-            style={[
-              styles.statCard,
-              { backgroundColor: colors.primary + "15" },
-            ]}
-          >
-            <Ionicons name="calendar" size={24} color={colors.primary} />
+          <View style={styles.statCard}>
+            <View
+              style={[
+                styles.statIconBox,
+                { backgroundColor: colors.primary + "20" },
+              ]}
+            >
+              <Ionicons name="calendar" size={22} color={colors.primary} />
+            </View>
             <Text style={styles.statNumber}>24</Text>
-            <Text style={styles.statLabel}>Upcoming</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Upcoming
+            </Text>
           </View>
-          <View
-            style={[
-              styles.statCard,
-              { backgroundColor: colors.secondary + "15" },
-            ]}
-          >
-            <Ionicons name="heart" size={24} color={colors.secondary} />
+          <View style={styles.statCard}>
+            <View
+              style={[
+                styles.statIconBox,
+                { backgroundColor: colors.secondary + "20" },
+              ]}
+            >
+              <Ionicons name="heart" size={22} color={colors.secondary} />
+            </View>
             <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Saved</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Saved
+            </Text>
           </View>
-          <View
-            style={[styles.statCard, { backgroundColor: "#4ECDC4" + "15" }]}
-          >
-            <Ionicons name="ticket" size={24} color="#4ECDC4" />
+          <View style={styles.statCard}>
+            <View
+              style={[
+                styles.statIconBox,
+                { backgroundColor: "#4ECDC4" + "20" },
+              ]}
+            >
+              <Ionicons name="checkmark-circle" size={22} color="#4ECDC4" />
+            </View>
             <Text style={styles.statNumber}>5</Text>
-            <Text style={styles.statLabel}>Attending</Text>
+            <Text style={styles.statLabel} numberOfLines={1}>
+              Attending
+            </Text>
           </View>
         </View>
 
-        {/* Featured Event Banner */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Event</Text>
@@ -124,7 +157,6 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Quick Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickActions}>
@@ -152,7 +184,6 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Categories Grid */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Browse by Category</Text>
@@ -185,7 +216,6 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Trending Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Trending Now 🔥</Text>
@@ -237,36 +267,91 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: colors.primary,
-    borderBottomLeftRadius: borderRadius.xl,
-    borderBottomRightRadius: borderRadius.xl,
+    borderBottomLeftRadius: borderRadius.xxl,
+    borderBottomRightRadius: borderRadius.xxl,
     ...shadows.lg,
+    position: "relative",
+    overflow: "hidden",
+  },
+  decorativeCircle1: {
+    position: "absolute",
+    top: -50,
+    right: -30,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(255,255,255,0.1)",
+  },
+  decorativeCircle2: {
+    position: "absolute",
+    bottom: -40,
+    left: -40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "rgba(255,255,255,0.08)",
   },
   header: {
-    paddingTop: spacing.xl,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight + spacing.lg
+        : spacing.xxl,
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: spacing.md,
+    alignItems: "center",
+    marginBottom: spacing.lg,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    flex: 1,
+  },
+  logoContainer: {
+    marginRight: spacing.xs,
+  },
+  logoCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+  headerRight: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  searchButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   greeting: {
-    fontSize: typography.fontSize.base,
+    fontSize: typography.fontSize.sm,
     color: colors.surface,
     opacity: 0.9,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs / 2,
   },
   headerTitle: {
-    fontSize: typography.fontSize.xxxl,
+    fontSize: typography.fontSize.xxl,
     fontWeight: typography.fontWeight.bold,
     color: colors.surface,
+    letterSpacing: 0.5,
   },
   notificationButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.2)",
     justifyContent: "center",
     alignItems: "center",
@@ -274,44 +359,58 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    top: 4,
+    right: 4,
     backgroundColor: colors.secondary,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
   notificationBadgeText: {
     color: colors.surface,
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: typography.fontWeight.bold,
   },
   headerSubtitle: {
     fontSize: typography.fontSize.base,
     color: colors.surface,
-    opacity: 0.9,
+    opacity: 0.85,
+    lineHeight: 22,
+    paddingLeft: spacing.xs,
   },
   content: {
     padding: spacing.md,
+    marginTop: spacing.lg,
   },
   statsRow: {
     flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: -spacing.xl,
-    marginBottom: spacing.md,
+    gap: spacing.md,
+    marginBottom: spacing.xl,
   },
   statCard: {
     flex: 1,
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
     alignItems: "center",
     ...shadows.md,
+    minWidth: 0,
+  },
+  statIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: spacing.sm,
   },
   statNumber: {
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize.xxl,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
     marginTop: spacing.xs,
@@ -319,7 +418,10 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    marginTop: spacing.xs,
+    marginTop: spacing.xs / 2,
+    fontWeight: typography.fontWeight.medium,
+    textAlign: "center",
+    numberOfLines: 1,
   },
   section: {
     marginBottom: spacing.lg,
