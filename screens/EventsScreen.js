@@ -4,306 +4,314 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function EventsScreen({ navigation }) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Sample events data
-  const sampleEvents = [
+  const categories = [
+    "All",
+    "Community",
+    "Music",
+    "Sports",
+    "Education",
+    "Social",
+    "Other",
+  ];
+
+  // 🗓 Sample Data — 3 per category
+  const EVENTS = [
+    // COMMUNITY
     {
-      id: 1,
-      title: "Community Cleanup Day",
-      date: "October 12, 2025",
-      time: "10:00 AM",
-      location: "Central Park",
+      id: "c1",
+      title: "Community Clean-Up Drive",
       category: "Community",
-      description:
-        "Join us for a community cleanup event to make our neighborhood cleaner and greener!",
+      date: "October 18, 2025",
+      time: "8:00 AM",
+      location: "Barangay Plaza",
     },
     {
-      id: 2,
-      title: "Tech Workshop",
-      date: "October 15, 2025",
-      time: "2:00 PM",
-      location: "Innovation Hub",
-      category: "Education",
-      description:
-        "Learn about the latest technologies and trends in software development.",
+      id: "c2",
+      title: "Tree Planting Day",
+      category: "Community",
+      date: "October 25, 2025",
+      time: "7:30 AM",
+      location: "Riverside Area",
     },
     {
-      id: 3,
-      title: "Live Music Festival",
-      date: "October 20, 2025",
-      time: "6:00 PM",
-      location: "City Square",
+      id: "c3",
+      title: "Barangay Meeting",
+      category: "Community",
+      date: "November 2, 2025",
+      time: "3:00 PM",
+      location: "Barangay Hall",
+    },
+
+    // MUSIC
+    {
+      id: "m1",
+      title: "Battle of the Bands",
       category: "Music",
-      description:
-        "An evening of live music featuring local bands and artists. Food and drinks available!",
+      date: "October 20, 2025",
+      time: "7:00 PM",
+      location: "Town Plaza",
+    },
+    {
+      id: "m2",
+      title: "Choir Festival",
+      category: "Music",
+      date: "November 5, 2025",
+      time: "6:00 PM",
+      location: "Community Center",
+    },
+    {
+      id: "m3",
+      title: "Acoustic Night",
+      category: "Music",
+      date: "November 12, 2025",
+      time: "8:00 PM",
+      location: "Café Harmony",
+    },
+
+    // SPORTS
+    {
+      id: "s1",
+      title: "Basketball Tournament Finals",
+      category: "Sports",
+      date: "October 28, 2025",
+      time: "5:00 PM",
+      location: "Community Court",
+    },
+    {
+      id: "s2",
+      title: "Fun Run 2025",
+      category: "Sports",
+      date: "November 10, 2025",
+      time: "6:00 AM",
+      location: "City Park",
+    },
+    {
+      id: "s3",
+      title: "Volleyball Exhibition Match",
+      category: "Sports",
+      date: "November 18, 2025",
+      time: "4:00 PM",
+      location: "Sports Gym",
+    },
+
+    // EDUCATION
+    {
+      id: "e1",
+      title: "Financial Literacy Workshop",
+      category: "Education",
+      date: "October 30, 2025",
+      time: "9:00 AM",
+      location: "City Library",
+    },
+    {
+      id: "e2",
+      title: "Coding for Beginners",
+      category: "Education",
+      date: "November 8, 2025",
+      time: "1:00 PM",
+      location: "Tech Hub Center",
+    },
+    {
+      id: "e3",
+      title: "Leadership Seminar",
+      category: "Education",
+      date: "November 20, 2025",
+      time: "10:00 AM",
+      location: "Municipal Hall",
+    },
+
+    // SOCIAL
+    {
+      id: "so1",
+      title: "Halloween Social Night",
+      category: "Social",
+      date: "October 31, 2025",
+      time: "6:00 PM",
+      location: "Clubhouse",
+    },
+    {
+      id: "so2",
+      title: "Community Karaoke Night",
+      category: "Social",
+      date: "November 15, 2025",
+      time: "7:30 PM",
+      location: "Covered Court",
+    },
+    {
+      id: "so3",
+      title: "Movie Under the Stars",
+      category: "Social",
+      date: "November 22, 2025",
+      time: "8:00 PM",
+      location: "Open Field",
+    },
+
+    // OTHER
+    {
+      id: "o1",
+      title: "Local Market Day",
+      category: "Other",
+      date: "October 22, 2025",
+      time: "7:00 AM",
+      location: "Public Market",
+    },
+    {
+      id: "o2",
+      title: "Pet Adoption Drive",
+      category: "Other",
+      date: "November 6, 2025",
+      time: "9:00 AM",
+      location: "Animal Shelter",
+    },
+    {
+      id: "o3",
+      title: "Art Fair 2025",
+      category: "Other",
+      date: "November 25, 2025",
+      time: "10:00 AM",
+      location: "City Art Hall",
     },
   ];
+
+  // Filter logic
+  const filteredEvents =
+    selectedCategory === "All"
+      ? EVENTS
+      : EVENTS.filter((event) => event.category === selectedCategory);
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Events</Text>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search events..."
-            placeholderTextColor={colors.textLight}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
+        <Text style={styles.headerTitle}>Upcoming Events</Text>
       </View>
 
-      {/* Filter Buttons */}
+      {/* Category Filter Buttons */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
+        style={styles.categoryScroll}
+        contentContainerStyle={{ paddingHorizontal: spacing.md }}
       >
-        {["All", "Community", "Music", "Sports", "Education"].map(
-          (filter, index) => (
-            <TouchableOpacity
-              key={index}
+        {categories.map((cat) => (
+          <TouchableOpacity
+            key={cat}
+            style={[
+              styles.categoryPill,
+              selectedCategory === cat && styles.categoryPillActive,
+            ]}
+            onPress={() => setSelectedCategory(cat)}
+          >
+            <Text
               style={[
-                styles.filterButton,
-                index === 0 && styles.filterButtonActive,
+                styles.categoryText,
+                selectedCategory === cat && styles.categoryTextActive,
               ]}
             >
-              <Text
-                style={[
-                  styles.filterText,
-                  index === 0 && styles.filterTextActive,
-                ]}
-              >
-                {filter}
-              </Text>
-            </TouchableOpacity>
-          )
-        )}
+              {cat}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
 
       {/* Events List */}
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {sampleEvents.map((event) => (
+      <ScrollView style={styles.eventsList}>
+        {filteredEvents.map((event) => (
           <TouchableOpacity
             key={event.id}
             style={styles.eventCard}
             onPress={() => navigation.navigate("EventDetails", { event })}
           >
-            <View style={styles.eventHeader}>
-              <View style={styles.eventCategoryBadge}>
-                <Text style={styles.eventCategoryText}>{event.category}</Text>
-              </View>
-              <Text style={styles.eventTime}>{event.time}</Text>
-            </View>
-
             <Text style={styles.eventTitle}>{event.title}</Text>
-
-            <View style={styles.eventDetails}>
-              <View style={styles.eventDetailRow}>
-                <Text style={styles.eventDetailIcon}>📅</Text>
-                <Text style={styles.eventDetailText}>{event.date}</Text>
-              </View>
-              <View style={styles.eventDetailRow}>
-                <Text style={styles.eventDetailIcon}>📍</Text>
-                <Text style={styles.eventDetailText}>{event.location}</Text>
-              </View>
-            </View>
-
-            <View style={styles.eventActions}>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => navigation.navigate("EventDetails", { event })}
-              >
-                <Text style={styles.actionButtonText}>View Details</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconButton}>
-                <Text style={styles.iconButtonText}>❤️</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.eventCategory}>{event.category}</Text>
+            <Text style={styles.eventInfo}>
+              📅 {event.date}   🕐 {event.time}
+            </Text>
+            <Text style={styles.eventLocation}>📍 {event.location}</Text>
           </TouchableOpacity>
         ))}
 
-        {/* Create Event Button */}
-        <TouchableOpacity
-          style={styles.createEventButton}
-          onPress={() => navigation.navigate("CreateEvent")}
-        >
-          <Text style={styles.createEventIcon}>✍️</Text>
-          <Text style={styles.createEventText}>Create New Event</Text>
-        </TouchableOpacity>
+        {filteredEvents.length === 0 && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>
+              No events found for this category.
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
-    backgroundColor: colors.surface,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.lg,
     paddingHorizontal: spacing.md,
+    alignItems: "center",
     ...shadows.sm,
   },
   headerTitle: {
-    fontSize: typography.fontSize.xxl,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.text,
-    marginBottom: spacing.md,
+    color: colors.surface,
   },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
+  categoryScroll: {
+    backgroundColor: colors.surface,
     paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  searchIcon: {
-    fontSize: 18,
-    marginRight: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: typography.fontSize.base,
-    color: colors.text,
-  },
-  filterContainer: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    maxHeight: 60,
-  },
-  filterButton: {
+  categoryPill: {
+    backgroundColor: colors.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.round,
-    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.border,
     marginRight: spacing.sm,
   },
-  filterButtonActive: {
+  categoryPillActive: {
     backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
-  filterText: {
+  categoryText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.text,
   },
-  filterTextActive: {
-    color: colors.surface,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.md,
-  },
+  categoryTextActive: { color: colors.surface },
+  eventsList: { padding: spacing.md },
   eventCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
-    ...shadows.md,
-  },
-  eventHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.sm,
-  },
-  eventCategoryBadge: {
-    backgroundColor: colors.primaryLight,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-  },
-  eventCategoryText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.surface,
-  },
-  eventTime: {
-    fontSize: typography.fontSize.sm,
-    color: colors.textSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.sm,
   },
   eventTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  eventDetails: {
-    marginBottom: spacing.md,
-  },
-  eventDetailRow: {
-    flexDirection: "row",
-    alignItems: "center",
     marginBottom: spacing.xs,
   },
-  eventDetailIcon: {
-    fontSize: 14,
-    marginRight: spacing.sm,
+  eventCategory: {
+    color: colors.secondary,
+    fontWeight: typography.fontWeight.medium,
+    marginBottom: spacing.xs,
   },
-  eventDetailText: {
-    fontSize: typography.fontSize.sm,
-    color: colors.textSecondary,
-  },
-  eventActions: {
-    flexDirection: "row",
-    gap: spacing.sm,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.md,
-    paddingVertical: spacing.sm,
-    alignItems: "center",
-  },
-  actionButtonText: {
-    color: colors.surface,
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold,
-  },
-  iconButton: {
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  iconButtonText: {
-    fontSize: 18,
-  },
-  createEventButton: {
-    backgroundColor: colors.secondary,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.xl,
-    ...shadows.md,
-  },
-  createEventIcon: {
-    fontSize: 20,
-    marginRight: spacing.sm,
-  },
-  createEventText: {
-    color: colors.surface,
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold,
-  },
+  eventInfo: { color: colors.textSecondary, marginBottom: spacing.xs },
+  eventLocation: { color: colors.textLight },
+  emptyState: { alignItems: "center", paddingVertical: spacing.xl },
+  emptyText: { color: colors.textSecondary, fontSize: typography.fontSize.base },
 });
