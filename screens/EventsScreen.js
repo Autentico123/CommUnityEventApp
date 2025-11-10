@@ -10,50 +10,27 @@ import {
   StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useEvents } from "../context/EventContext";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function EventsScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const { allEvents } = useEvents();
 
-  const sampleEvents = [
-    {
-      id: 1,
-      title: "Community Cleanup Day",
-      date: "October 12, 2025",
-      time: "10:00 AM",
-      location: "Central Park",
-      category: "Community",
-      attendees: 45,
-      image: "🌳",
-      description:
-        "Join us for a community cleanup event to make our neighborhood cleaner and greener!",
-    },
-    {
-      id: 2,
-      title: "Tech Workshop",
-      date: "October 15, 2025",
-      time: "2:00 PM",
-      location: "Innovation Hub",
-      category: "Education",
-      attendees: 120,
-      image: "💻",
-      description:
-        "Learn about the latest technologies and trends in software development.",
-    },
-    {
-      id: 3,
-      title: "Live Music Festival",
-      date: "October 20, 2025",
-      time: "6:00 PM",
-      location: "City Square",
-      category: "Music",
-      attendees: 300,
-      image: "🎵",
-      description:
-        "An evening of live music featuring local bands and artists. Food and drinks available!",
-    },
-  ];
+  const sampleEvents = allEvents;
+
+  // Filter events based on selected filter and search query
+  const filteredEvents = sampleEvents.filter((event) => {
+    const matchesFilter =
+      selectedFilter === "All" || event.category === selectedFilter;
+    const matchesSearch =
+      searchQuery === "" ||
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <View style={styles.container}>
@@ -68,7 +45,7 @@ export default function EventsScreen({ navigation }) {
             <View>
               <Text style={styles.headerTitle}>Discover Events</Text>
               <Text style={styles.headerSubtitle}>
-                {sampleEvents.length} events available
+                {filteredEvents.length} events available
               </Text>
             </View>
           </View>
@@ -201,101 +178,144 @@ export default function EventsScreen({ navigation }) {
         )}
       </ScrollView>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <Text style={styles.sectionTitle}>Upcoming Events</Text>
 
-        {sampleEvents.map((event) => (
-          <TouchableOpacity
-            key={event.id}
-            style={styles.eventCard}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate("EventDetails", { event })}
-          >
-            <View style={styles.eventImagePlaceholder}>
-              <Text style={styles.eventImageEmoji}>{event.image}</Text>
-              <TouchableOpacity style={styles.eventHeartButton}>
-                <Ionicons
-                  name="heart-outline"
-                  size={22}
-                  color={colors.surface}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.eventContent}>
-              <View style={styles.eventHeader}>
-                <View style={styles.eventCategoryBadge}>
-                  <Ionicons name="pricetag" size={12} color={colors.primary} />
-                  <Text style={styles.eventCategoryText}>{event.category}</Text>
-                </View>
-                <View style={styles.attendeesContainer}>
-                  <Ionicons name="people" size={14} color={colors.secondary} />
-                  <Text style={styles.attendeesText}>{event.attendees}+</Text>
-                </View>
-              </View>
-
-              <Text style={styles.eventTitle} numberOfLines={2}>
-                {event.title}
-              </Text>
-
-              <Text style={styles.eventDescription} numberOfLines={2}>
-                {event.description}
-              </Text>
-
-              <View style={styles.eventDetails}>
-                <View style={styles.eventDetailRow}>
-                  <View style={styles.eventDetailIcon}>
-                    <Ionicons
-                      name="calendar"
-                      size={14}
-                      color={colors.primary}
-                    />
-                  </View>
-                  <Text style={styles.eventDetailText}>{event.date}</Text>
-                </View>
-                <View style={styles.eventDetailRow}>
-                  <View style={styles.eventDetailIcon}>
-                    <Ionicons name="time" size={14} color={colors.primary} />
-                  </View>
-                  <Text style={styles.eventDetailText}>{event.time}</Text>
-                </View>
-                <View style={styles.eventDetailRow}>
-                  <View style={styles.eventDetailIcon}>
-                    <Ionicons
-                      name="location"
-                      size={14}
-                      color={colors.primary}
-                    />
-                  </View>
-                  <Text style={styles.eventDetailText} numberOfLines={1}>
-                    {event.location}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.eventFooter}>
-                <TouchableOpacity
-                  style={styles.viewDetailsButton}
-                  onPress={() => navigation.navigate("EventDetails", { event })}
-                >
-                  <Text style={styles.viewDetailsText}>View Details</Text>
+        {filteredEvents.length === 0 ? (
+          <View style={styles.noEventsContainer}>
+            <Ionicons
+              name="calendar-outline"
+              size={64}
+              color={colors.textLight}
+            />
+            <Text style={styles.noEventsText}>No events found</Text>
+            <Text style={styles.noEventsSubtext}>
+              Try adjusting your filters or search query
+            </Text>
+          </View>
+        ) : (
+          filteredEvents.map((event) => (
+            <TouchableOpacity
+              key={event.id}
+              style={styles.eventCard}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate("EventDetails", { event })}
+            >
+              <View style={styles.eventImagePlaceholder}>
+                <Text style={styles.eventImageEmoji}>{event.image}</Text>
+                <TouchableOpacity style={styles.eventHeartButton}>
                   <Ionicons
-                    name="arrow-forward"
-                    size={16}
-                    color={colors.primary}
+                    name="heart-outline"
+                    size={22}
+                    color={colors.surface}
                   />
                 </TouchableOpacity>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+
+              <View style={styles.eventContent}>
+                <View style={styles.eventHeader}>
+                  <View style={styles.eventCategoryBadge}>
+                    <Ionicons
+                      name="pricetag"
+                      size={12}
+                      color={colors.primary}
+                    />
+                    <Text style={styles.eventCategoryText}>
+                      {event.category}
+                    </Text>
+                  </View>
+                  <View style={styles.eventHeaderRight}>
+                    {event.isUserCreated && (
+                      <View style={styles.userCreatedBadge}>
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={12}
+                          color={colors.success || "#4CAF50"}
+                        />
+                        <Text style={styles.userCreatedText}>Your Event</Text>
+                      </View>
+                    )}
+                    <View style={styles.attendeesContainer}>
+                      <Ionicons
+                        name="people"
+                        size={14}
+                        color={colors.secondary}
+                      />
+                      <Text style={styles.attendeesText}>
+                        {event.attendees}+
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <Text style={styles.eventTitle} numberOfLines={2}>
+                  {event.title}
+                </Text>
+
+                <Text style={styles.eventDescription} numberOfLines={2}>
+                  {event.description}
+                </Text>
+
+                <View style={styles.eventDetails}>
+                  <View style={styles.eventDetailRow}>
+                    <View style={styles.eventDetailIcon}>
+                      <Ionicons
+                        name="calendar"
+                        size={14}
+                        color={colors.primary}
+                      />
+                    </View>
+                    <Text style={styles.eventDetailText}>{event.date}</Text>
+                  </View>
+                  <View style={styles.eventDetailRow}>
+                    <View style={styles.eventDetailIcon}>
+                      <Ionicons name="time" size={14} color={colors.primary} />
+                    </View>
+                    <Text style={styles.eventDetailText}>{event.time}</Text>
+                  </View>
+                  <View style={styles.eventDetailRow}>
+                    <View style={styles.eventDetailIcon}>
+                      <Ionicons
+                        name="location"
+                        size={14}
+                        color={colors.primary}
+                      />
+                    </View>
+                    <Text style={styles.eventDetailText} numberOfLines={1}>
+                      {event.location}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.eventFooter}>
+                  <TouchableOpacity
+                    style={styles.viewDetailsButton}
+                    onPress={() =>
+                      navigation.navigate("EventDetails", { event })
+                    }
+                  >
+                    <Text style={styles.viewDetailsText}>View Details</Text>
+                    <Ionicons
+                      name="arrow-forward"
+                      size={16}
+                      color={colors.primary}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
 
         <TouchableOpacity
           style={styles.fab}
           onPress={() => navigation.navigate("CreateEvent")}
           activeOpacity={0.8}
         >
-          <Ionicons name="add" size={28} color={colors.surface} />
+          <Ionicons name="add" size={32} color={colors.surface} />
         </TouchableOpacity>
 
         <View style={styles.bottomSpacing} />
@@ -442,6 +462,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
@@ -500,6 +523,25 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
     color: colors.primary,
+  },
+  eventHeaderRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  userCreatedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#4CAF50" + "15",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: borderRadius.sm,
+  },
+  userCreatedText: {
+    fontSize: typography.fontSize.xs,
+    color: "#4CAF50",
+    fontWeight: typography.fontWeight.bold,
   },
   attendeesContainer: {
     flexDirection: "row",
@@ -568,18 +610,36 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.bold,
     color: colors.primary,
   },
+  noEventsContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.xxl * 3,
+  },
+  noEventsText: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.text,
+    marginTop: spacing.lg,
+  },
+  noEventsSubtext: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+    textAlign: "center",
+  },
   fab: {
     position: "absolute",
-    bottom: spacing.xl,
+    bottom: spacing.xl + 60,
     right: spacing.lg,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
     ...shadows.lg,
-    elevation: 8,
+    elevation: 10,
   },
   bottomSpacing: {
     height: spacing.xxl * 2,

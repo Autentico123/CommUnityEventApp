@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,18 +8,24 @@ import {
   TouchableOpacity,
   Platform,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Toast from "react-native-toast-message";
+import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
+import { useEvents } from "../context/EventContext";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function CreateEventScreen({ navigation }) {
+  const { addEvent } = useEvents();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("Community");
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -62,18 +68,107 @@ export default function CreateEventScreen({ navigation }) {
     });
   };
 
+  const getCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
+
+      // Request location permissions
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Toast.show({
+          type: "error",
+          text1: "Permission Denied",
+          text2: "Location permission is required to use GPS",
+          position: "top",
+          visibilityTime: 3000,
+        });
+        setLoadingLocation(false);
+        return;
+      }
+
+      // Get current position
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      // Reverse geocode to get address
+      const reverseGeocode = await Location.reverseGeocodeAsync({
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+      });
+
+      if (reverseGeocode.length > 0) {
+        const address = reverseGeocode[0];
+
+        // Format Philippine address with Purok, Barangay, Municipality
+        let formattedAddress = "";
+
+        if (address.street) {
+          formattedAddress += address.street + ", ";
+        }
+        if (address.subregion || address.district) {
+          // Barangay level
+          formattedAddress += (address.subregion || address.district) + ", ";
+        }
+        if (address.city) {
+          // Municipality/City
+          formattedAddress += address.city + ", ";
+        }
+        if (address.region) {
+          // Province
+          formattedAddress += address.region + ", ";
+        }
+        if (address.country) {
+          formattedAddress += address.country;
+        }
+
+        setLocation(formattedAddress || address.name || "Location detected");
+
+        Toast.show({
+          type: "success",
+          text1: "📍 Location Detected",
+          text2: "Your current location has been added",
+          position: "top",
+          visibilityTime: 2500,
+        });
+      }
+    } catch (error) {
+      console.error("Error getting location:", error);
+      Toast.show({
+        type: "error",
+        text1: "Location Error",
+        text2: "Could not retrieve your current location",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
+
   const handleCreateEvent = () => {
     if (!title.trim()) {
-      Alert.alert("Error", "Please enter an event title");
+      Toast.show({
+        type: "error",
+        text1: "Missing Title",
+        text2: "Please enter an event title",
+        position: "top",
+        visibilityTime: 3000,
+      });
       return;
     }
     if (!location.trim()) {
-      Alert.alert("Error", "Please enter a location");
+      Toast.show({
+        type: "error",
+        text1: "Missing Location",
+        text2: "Please enter a location",
+        position: "top",
+        visibilityTime: 3000,
+      });
       return;
     }
 
     const newEvent = {
-      id: Date.now().toString(),
       title: title.trim(),
       description: description.trim(),
       location: location.trim(),
@@ -90,24 +185,31 @@ export default function CreateEventScreen({ navigation }) {
       createdAt: new Date().toISOString(),
     };
 
-    Alert.alert("Success!", "Your event has been created successfully!", [
-      {
-        text: "View Event",
-        onPress: () => navigation.navigate("EventDetails", { event: newEvent }),
-      },
-      {
-        text: "Create Another",
-        onPress: () => {
-          // Reset form
-          setTitle("");
-          setDescription("");
-          setLocation("");
-          setCategory("Community");
-          setDate(new Date());
-          setTime(new Date());
-        },
-      },
-    ]);
+    // Add event to context
+    const createdEvent = addEvent(newEvent);
+
+    // Reset form
+    setTitle("");
+    setDescription("");
+    setLocation("");
+    setCategory("Community");
+    setDate(new Date());
+    setTime(new Date());
+
+    // Show custom success toast
+    Toast.show({
+      type: "success",
+      text1: "🎉 Event Created Successfully!",
+      text2: `"${newEvent.title}" has been added to your events`,
+      position: "top",
+      visibilityTime: 4000,
+      topOffset: 60,
+    });
+
+    // Navigate to Events tab after a short delay
+    setTimeout(() => {
+      navigation.navigate("Events");
+    }, 500);
   };
 
   return (
@@ -124,7 +226,11 @@ export default function CreateEventScreen({ navigation }) {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Title Input */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Event Title *</Text>
@@ -222,14 +328,36 @@ export default function CreateEventScreen({ navigation }) {
 
         {/* Location Input */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Location *</Text>
+          <View style={styles.labelRow}>
+            <Text style={styles.label}>Location *</Text>
+            <TouchableOpacity
+              style={styles.gpsButton}
+              onPress={getCurrentLocation}
+              disabled={loadingLocation}
+            >
+              {loadingLocation ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <>
+                  <Ionicons name="location" size={16} color={colors.primary} />
+                  <Text style={styles.gpsButtonText}>Use GPS</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
           <TextInput
             style={styles.input}
-            placeholder="Enter event location"
+            placeholder="e.g. Purok 5, Brgy. San Isidro, Trinidad, Bohol"
             placeholderTextColor={colors.textLight}
             value={location}
             onChangeText={setLocation}
+            multiline
+            numberOfLines={2}
           />
+          <Text style={styles.locationHint}>
+            💡 Tip: Use GPS to auto-detect your location or manually enter
+            Purok, Barangay, Municipality
+          </Text>
         </View>
 
         {/* Description Input */}
@@ -251,8 +379,17 @@ export default function CreateEventScreen({ navigation }) {
         <TouchableOpacity
           style={styles.createButton}
           onPress={handleCreateEvent}
+          activeOpacity={0.8}
         >
-          <Text style={styles.createButtonText}>Create Event</Text>
+          <View style={styles.createButtonContent}>
+            <Ionicons
+              name="checkmark-circle"
+              size={24}
+              color={colors.surface}
+            />
+            <Text style={styles.createButtonText}>Create Event</Text>
+            <Ionicons name="arrow-forward" size={20} color={colors.surface} />
+          </View>
         </TouchableOpacity>
 
         <View style={styles.bottomSpacing} />
@@ -299,14 +436,36 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.md,
   },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   inputGroup: {
     marginBottom: spacing.lg,
+  },
+  labelRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.sm,
   },
   label: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
     color: colors.text,
-    marginBottom: spacing.sm,
+  },
+  gpsButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: colors.primary + "15",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.md,
+  },
+  gpsButtonText: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.primary,
   },
   input: {
     backgroundColor: colors.surface,
@@ -316,6 +475,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  locationHint: {
+    fontSize: typography.fontSize.xs,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+    fontStyle: "italic",
+    lineHeight: 16,
   },
   textArea: {
     minHeight: 120,
@@ -364,15 +530,26 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: colors.secondary,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
+    borderRadius: borderRadius.xl,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
     alignItems: "center",
-    ...shadows.md,
+    justifyContent: "center",
+    marginTop: spacing.lg,
+    ...shadows.lg,
+    elevation: 8,
+  },
+  createButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.md,
   },
   createButtonText: {
     color: colors.surface,
-    fontSize: typography.fontSize.lg,
+    fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   bottomSpacing: {
     height: spacing.xxl,

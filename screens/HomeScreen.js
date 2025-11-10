@@ -11,9 +11,12 @@ import {
   StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useEvents } from "../context/EventContext";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
 
 export default function HomeScreen({ navigation }) {
+  const { allEvents } = useEvents();
+
   const categories = [
     { name: "Sports", icon: "football", color: "#FF6B6B", count: 12 },
     { name: "Music", icon: "musical-notes", color: "#4ECDC4", count: 8 },
@@ -24,7 +27,11 @@ export default function HomeScreen({ navigation }) {
   ];
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContent}
+    >
       <View style={styles.headerContainer}>
         <View style={styles.decorativeCircle1} />
         <View style={styles.decorativeCircle2} />
@@ -79,7 +86,7 @@ export default function HomeScreen({ navigation }) {
             >
               <Ionicons name="calendar" size={22} color={colors.primary} />
             </View>
-            <Text style={styles.statNumber}>24</Text>
+            <Text style={styles.statNumber}>{allEvents.length}</Text>
             <Text style={styles.statLabel} numberOfLines={1}>
               Upcoming
             </Text>
@@ -264,6 +271,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   headerContainer: {
     backgroundColor: colors.primary,

@@ -159,7 +159,11 @@ See you there!
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.badgeContainer}>
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryBadgeText}>
@@ -333,6 +337,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   badgeContainer: {
     padding: spacing.md,

@@ -7,19 +7,35 @@ import {
   TouchableOpacity,
   Platform,
   StatusBar,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, typography, spacing, borderRadius, shadows } from "../theme";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Logout", onPress: logout, style: "destructive" },
+    ]);
+  };
+
   const menuItems = [
     {
       icon: "heart",
       label: "Saved Events",
-      count: "12",
+      count: user?.savedEvents?.length?.toString() || "0",
       color: colors.secondary,
     },
-    { icon: "ticket", label: "My Events", count: "5", color: colors.primary },
+    {
+      icon: "ticket",
+      label: "My Events",
+      count: user?.createdEvents?.length?.toString() || "0",
+      color: colors.primary,
+    },
     { icon: "calendar", label: "Calendar", color: "#4ECDC4" },
     { icon: "settings", label: "Settings", color: colors.textSecondary },
     {
@@ -29,10 +45,19 @@ export default function ProfileScreen() {
       color: "#FFE66D",
     },
     { icon: "help-circle", label: "Help & Support", color: colors.primary },
+    {
+      icon: "log-out",
+      label: "Logout",
+      color: "#ff4444",
+      onPress: handleLogout,
+    },
   ];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
       <View style={styles.headerContainer}>
         <View style={styles.headerBackground} />
         <View style={styles.header}>
@@ -55,9 +80,9 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.userName}>Vincent Autentico</Text>
+          <Text style={styles.userName}>{user?.name || "Guest User"}</Text>
           <Text style={styles.userBio}>
-            Event enthusiast • Community builder
+            {user?.bio || "Event enthusiast • Community builder"}
           </Text>
 
           <View style={styles.badgeContainer}>
@@ -79,7 +104,9 @@ export default function ProfileScreen() {
           >
             <Ionicons name="calendar" size={20} color={colors.primary} />
           </View>
-          <Text style={styles.statNumber}>12</Text>
+          <Text style={styles.statNumber}>
+            {user?.attendingEvents?.length || 0}
+          </Text>
           <Text style={styles.statLabel}>Events Joined</Text>
         </TouchableOpacity>
         <View style={styles.statDivider} />
@@ -92,7 +119,9 @@ export default function ProfileScreen() {
           >
             <Ionicons name="create" size={20} color={colors.secondary} />
           </View>
-          <Text style={styles.statNumber}>5</Text>
+          <Text style={styles.statNumber}>
+            {user?.createdEvents?.length || 0}
+          </Text>
           <Text style={styles.statLabel}>Created</Text>
         </TouchableOpacity>
         <View style={styles.statDivider} />
@@ -156,6 +185,7 @@ export default function ProfileScreen() {
                 index === menuItems.length - 1 && styles.menuItemLast,
               ]}
               activeOpacity={0.7}
+              onPress={item.onPress}
             >
               <View
                 style={[
@@ -224,6 +254,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   headerContainer: {
     position: "relative",
