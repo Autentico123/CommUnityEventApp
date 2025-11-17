@@ -7,6 +7,9 @@ import Toast from "react-native-toast-message";
 import MainNavigator from "./navigation/MainNavigator";
 import { EventProvider } from "./context/EventContext";
 import { AuthProvider } from "./context/AuthContext";
+import { ChatProvider } from "./context/ChatContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import { GroupProvider } from "./context/GroupContext";
 import { toastConfig } from "./config/toastConfig";
 import { colors } from "./theme";
 // must be color Brown
@@ -16,13 +19,19 @@ export default function App() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthProvider>
-          <EventProvider>
-            <NavigationContainer>
-              <MainNavigator />
-              <StatusBar style="light" backgroundColor={colors.primary} />
-            </NavigationContainer>
-            <Toast config={toastConfig} />
-          </EventProvider>
+          <NotificationProvider>
+            <ChatProvider>
+              <GroupProvider>
+                <EventProvider>
+                  <NavigationContainer>
+                    <MainNavigator />
+                    <StatusBar style="light" backgroundColor={colors.primary} />
+                  </NavigationContainer>
+                  <Toast config={toastConfig} />
+                </EventProvider>
+              </GroupProvider>
+            </ChatProvider>
+          </NotificationProvider>
         </AuthProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

@@ -30,11 +30,14 @@ export const EventProvider = ({ children }) => {
       const response = await eventAPI.getAllEvents(filters);
 
       if (response.success) {
-        // Transform MongoDB _id to id for consistency with existing code
-        const transformedEvents = response.events.map((event) => ({
-          ...event,
-          id: event._id,
-        }));
+        // Normalize MongoDB _id to id and remove _id
+        const transformedEvents = response.events.map((event) => {
+          const { _id, ...rest } = event;
+          return {
+            ...rest,
+            id: _id || event.id,
+          };
+        });
         setAllEvents(transformedEvents);
       }
     } catch (err) {
@@ -63,9 +66,10 @@ export const EventProvider = ({ children }) => {
       const response = await eventAPI.createEvent(event);
 
       if (response.success) {
+        const { _id, ...rest } = response.event;
         const newEvent = {
-          ...response.event,
-          id: response.event._id,
+          ...rest,
+          id: _id || response.event.id,
         };
 
         // Update local state
@@ -89,7 +93,6 @@ export const EventProvider = ({ children }) => {
       const localEvent = {
         ...event,
         id: Date.now(),
-        _id: Date.now(),
         attendees: 0,
         image: getCategoryEmoji(event.category),
         isUserCreated: true,
@@ -178,15 +181,37 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  // Update event status
+  const updateEventStatus = async (eventId, status) => {
+    try {
+      const response = await eventAPI.updateEventStatus(eventId, status);
+
+      if (response.success) {
+        // Update local state
+        setAllEvents((prevEvents) =>
+          prevEvents.map((event) =>
+            event.id === eventId ? { ...event, status } : event
+          )
+        );
+
+        return response.event;
+      }
+    } catch (err) {
+      console.error("Error updating event status:", err);
+      throw err;
+    }
+  };
+
   // Attend event (toggle attendance)
   const attendEvent = async (eventId) => {
     try {
       const response = await eventAPI.attendEvent(eventId);
 
       if (response.success) {
+        const { _id, ...rest } = response.event;
         const updatedEvent = {
-          ...response.event,
-          id: response.event._id,
+          ...rest,
+          id: _id || response.event.id,
         };
 
         // Update local state
@@ -208,7 +233,7 @@ export const EventProvider = ({ children }) => {
           visibilityTime: 2000,
         });
 
-        return updatedEvent;
+        return { event: updatedEvent, attending: response.attending };
       }
     } catch (err) {
       console.error("Error attending event:", err);
@@ -231,10 +256,12 @@ export const EventProvider = ({ children }) => {
       const response = await eventAPI.saveEvent(eventId);
 
       if (response.success) {
+        const isSaved = response.saved || response.isSaved;
+
         Toast.show({
           type: "success",
-          text1: response.saved ? "Event Saved" : "Event Removed",
-          text2: response.saved
+          text1: isSaved ? "Event Saved" : "Event Removed",
+          text2: isSaved
             ? "Added to your saved events"
             : "Removed from saved events",
           position: "top",
@@ -273,59 +300,7 @@ export const EventProvider = ({ children }) => {
   };
 
   // Fallback sample events for offline mode
-  const getSampleEvents = () => [
-    {
-      id: 1,
-      title: "Community Cleanup Day",
-      date: "December 12, 2025",
-      time: "10:00 AM",
-      location: "Riverside, Trinidad, Bohol",
-      category: "Community",
-      attendees: 45,
-      image: "👥",
-      description:
-        "Join us for a community cleanup event to make our neighborhood cleaner and greener!",
-      isUserCreated: false,
-    },
-    {
-      id: 2,
-      title: "Minimilitia",
-      date: "December 15, 2025",
-      time: "2:00 PM",
-      location: "Poblacion, Trinidad, Bohol",
-      category: "Education",
-      attendees: 120,
-      image: "�",
-      description: "Show your skills.",
-      isUserCreated: false,
-    },
-    {
-      id: 3,
-      title: "Live Music Festival",
-      date: "December 20, 2025",
-      time: "6:00 PM",
-      location: "Ubay, Bohol",
-      category: "Music",
-      attendees: 300,
-      image: "🎵",
-      description:
-        "An evening of live music featuring local bands and artists. Food and drinks available!",
-      isUserCreated: false,
-    },
-    {
-      id: 4,
-      title: "Kumbira",
-      date: "December 25, 2025",
-      time: "6:00 PM",
-      location: "Trinidad, Bohol",
-      category: "Food",
-      attendees: 300,
-      image: "🍽️",
-      description:
-        "An evening of live music featuring local bands and artists. Food and drinks available!",
-      isUserCreated: false,
-    },
-  ];
+  const getSampleEvents = () => [];
 
   return (
     <EventContext.Provider
@@ -334,6 +309,7 @@ export const EventProvider = ({ children }) => {
         addEvent,
         updateEvent,
         deleteEvent,
+        updateEventStatus,
         attendEvent,
         saveEvent,
         fetchEvents,

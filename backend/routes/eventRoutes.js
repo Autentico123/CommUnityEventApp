@@ -3,6 +3,10 @@ const router = express.Router();
 const Event = require("../models/Event");
 const User = require("../models/User");
 const { protect, optionalAuth } = require("../middleware/auth");
+const {
+  uploadEventImage,
+  handleUploadError,
+} = require("../middleware/uploadMiddleware");
 
 // Helper function to get category emoji
 const getCategoryEmoji = (category) => {
@@ -18,16 +22,56 @@ const getCategoryEmoji = (category) => {
   return emojiMap[category] || "📌";
 };
 
+// POST upload event image
+router.post("/upload-image", protect, (req, res) => {
+  uploadEventImage(req, res, (err) => {
+    if (err) {
+      return handleUploadError(err, req, res, () => {});
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: "No image file provided",
+      });
+    }
+
+    // Return the URL path to the uploaded image
+    const imageUrl = `/uploads/events/${req.file.filename}`;
+
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+      imageUrl: imageUrl,
+      filename: req.file.filename,
+    });
+  });
+});
+
 // GET all events
 router.get("/", optionalAuth, async (req, res) => {
   try {
-    const { category, search, sortBy = "dateTime", order = "asc" } = req.query;
+    const {
+      category,
+      search,
+      status,
+      sortBy = "dateTime",
+      order = "asc",
+    } = req.query;
 
     let query = {};
 
     // Filter by category
     if (category && category !== "All") {
       query.category = category;
+    }
+
+    // Filter by status (default to showing only published events for public view)
+    if (status) {
+      query.status = status;
+    } else {
+      // By default, only show published events unless user specifies otherwise
+      query.status = "published";
     }
 
     // Search functionality
@@ -93,8 +137,19 @@ router.get("/:id", optionalAuth, async (req, res) => {
 // POST create new event
 router.post("/", protect, async (req, res) => {
   try {
-    const { title, description, location, category, date, time, dateTime } =
-      req.body;
+    const {
+      title,
+      description,
+      location,
+      category,
+      date,
+      time,
+      dateTime,
+      imageUrl,
+      capacity,
+      coordinates,
+      status,
+    } = req.body;
 
     // Validation
     if (!title || !location || !date || !time) {
@@ -109,11 +164,15 @@ router.post("/", protect, async (req, res) => {
       title,
       description,
       location,
+      coordinates: coordinates || { latitude: null, longitude: null },
       category: category || "Community",
       date,
       time,
       dateTime: dateTime || new Date(),
       image: getCategoryEmoji(category || "Community"),
+      imageUrl: imageUrl || null,
+      capacity: capacity || null,
+      status: status || "published",
       isUserCreated: true,
       attendees: 0,
       creator: req.user._id, // Add creator from authenticated user
@@ -156,6 +215,10 @@ router.put("/:id", protect, async (req, res) => {
       time,
       dateTime,
       attendees,
+      imageUrl,
+      capacity,
+      coordinates,
+      status,
     } = req.body;
 
     // Check if user is the creator
@@ -183,6 +246,10 @@ router.put("/:id", protect, async (req, res) => {
       ...(time && { time }),
       ...(dateTime && { dateTime }),
       ...(attendees !== undefined && { attendees }),
+      ...(imageUrl !== undefined && { imageUrl }),
+      ...(capacity !== undefined && { capacity }),
+      ...(coordinates && { coordinates }),
+      ...(status && { status }),
       updatedAt: Date.now(),
     };
 
@@ -273,7 +340,11 @@ router.patch("/:id/attend", protect, async (req, res) => {
     }
 
     const userId = req.user._id;
-    const isAttending = event.attendeesList.includes(userId);
+    const isAttending = event.attendeesList.some(
+      (id) => id.toString() === userId.toString()
+    );
+
+    console.log(`User ${userId} attendance status BEFORE: ${isAttending}`);
 
     if (isAttending) {
       // Remove user from attendees
@@ -287,6 +358,16 @@ router.patch("/:id/attend", protect, async (req, res) => {
         $pull: { eventsAttending: event._id },
       });
     } else {
+      // Check if event is at capacity
+      if (event.capacity && event.attendeesList.length >= event.capacity) {
+        return res.status(400).json({
+          success: false,
+          error: "Event is at full capacity",
+          message: `This event has reached its maximum capacity of ${event.capacity} attendees`,
+          isFull: true,
+        });
+      }
+
       // Add user to attendees
       event.attendeesList.push(userId);
       event.attendees += 1;
@@ -301,13 +382,19 @@ router.patch("/:id/attend", protect, async (req, res) => {
     await event.populate("creator", "name avatar");
     await event.populate("attendeesList", "name avatar");
 
+    const newAttendingState = !isAttending;
+    console.log(`User ${userId} attendance status AFTER: ${newAttendingState}`);
+
     res.json({
       success: true,
       message: isAttending
         ? "Removed from event attendees"
         : "Added to event attendees",
       event,
-      isAttending: !isAttending,
+      attending: newAttendingState,
+      spotsRemaining: event.capacity
+        ? event.capacity - event.attendeesList.length
+        : null,
     });
   } catch (error) {
     console.error("Error updating attendance:", error);
@@ -332,7 +419,16 @@ router.post("/:id/save", protect, async (req, res) => {
     }
 
     const user = await User.findById(req.user._id);
-    const isSaved = user.savedEvents.includes(event._id);
+    const isSaved = user.savedEvents.some(
+      (savedId) => savedId.toString() === event._id.toString()
+    );
+
+    console.log("💾 Save event request:", {
+      userId: req.user._id,
+      eventId: event._id,
+      isSaved,
+      action: isSaved ? "unsave" : "save",
+    });
 
     if (isSaved) {
       // Remove from saved events
@@ -346,16 +442,70 @@ router.post("/:id/save", protect, async (req, res) => {
       });
     }
 
+    const saved = !isSaved;
+    console.log("✅ Save event result:", saved ? "saved" : "unsaved");
+
     res.json({
       success: true,
       message: isSaved ? "Event removed from saved" : "Event saved",
-      isSaved: !isSaved,
+      saved: saved,
+      isSaved: saved,
     });
   } catch (error) {
-    console.error("Error saving event:", error);
+    console.error("❌ Error saving event:", error);
     res.status(500).json({
       success: false,
       error: "Failed to save event",
+      message: error.message,
+    });
+  }
+});
+
+// PATCH update event status
+router.patch("/:id/status", protect, async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    // Validate status value
+    const validStatuses = ["draft", "published", "cancelled"];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error:
+          "Invalid status value. Must be 'draft', 'published', or 'cancelled'",
+      });
+    }
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        error: "Event not found",
+      });
+    }
+
+    // Check if user is the creator
+    if (event.creator && event.creator.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        error: "Only the event creator can change its status",
+      });
+    }
+
+    event.status = status;
+    await event.save();
+
+    res.json({
+      success: true,
+      message: `Event status updated to ${status}`,
+      event,
+    });
+  } catch (error) {
+    console.error("Error updating event status:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to update event status",
       message: error.message,
     });
   }

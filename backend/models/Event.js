@@ -17,6 +17,16 @@ const eventSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  coordinates: {
+    latitude: {
+      type: Number,
+      default: null,
+    },
+    longitude: {
+      type: Number,
+      default: null,
+    },
+  },
   category: {
     type: String,
     required: true,
@@ -48,6 +58,11 @@ const eventSchema = new mongoose.Schema({
     default: 0,
     min: 0,
   },
+  capacity: {
+    type: Number,
+    default: null, // null means unlimited capacity
+    min: 1,
+  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -62,6 +77,15 @@ const eventSchema = new mongoose.Schema({
   image: {
     type: String,
     default: "📌",
+  },
+  imageUrl: {
+    type: String,
+    default: null, // Actual image URL for uploaded photos
+  },
+  status: {
+    type: String,
+    enum: ["draft", "published", "cancelled"],
+    default: "published",
   },
   isUserCreated: {
     type: Boolean,
@@ -87,5 +111,7 @@ eventSchema.pre("save", function (next) {
 eventSchema.index({ title: "text", description: "text", location: "text" });
 eventSchema.index({ category: 1 });
 eventSchema.index({ dateTime: 1 });
+eventSchema.index({ status: 1 });
+eventSchema.index({ "coordinates.latitude": 1, "coordinates.longitude": 1 });
 
 module.exports = mongoose.model("Event", eventSchema);

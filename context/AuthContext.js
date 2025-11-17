@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
 
-        // Verify token is still valid
+        // Verify token is still valid and get fresh user data
         try {
           const response = await authAPI.getCurrentUser(storedToken);
           if (response.success) {
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
             await AsyncStorage.setItem("user", JSON.stringify(response.user));
           }
         } catch (error) {
+          console.error("Error refreshing user data:", error);
           // Token invalid, logout
           await logout();
         }

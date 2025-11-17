@@ -113,17 +113,39 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Method to get public profile (without sensitive data)
 userSchema.methods.toPublicProfile = function () {
+  // Helper function to extract IDs from populated fields
+  const extractIds = (arr) => {
+    if (!Array.isArray(arr)) return [];
+    return arr.map(item => {
+      // If it's null or undefined
+      if (!item) return null;
+      // If it's already a string
+      if (typeof item === 'string') return item;
+      // If it's a populated object with _id
+      if (item._id) {
+        // Handle nested ObjectId
+        return typeof item._id === 'string' ? item._id : item._id.toString();
+      }
+      // If it's a plain ObjectId
+      if (item.toString) {
+        return item.toString();
+      }
+      return String(item);
+    }).filter(id => id !== null); // Remove null values
+  };
+
   return {
+    _id: this._id,
     id: this._id,
     name: this.name,
     email: this.email,
     avatar: this.avatar,
     bio: this.bio,
-    eventsCreated: this.eventsCreated.length || 0,
-    eventsAttending: this.eventsAttending.length || 0,
-    savedEvents: this.savedEvents.length || 0,
-    followers: this.followers.length || 0,
-    following: this.following.length || 0,
+    eventsCreated: extractIds(this.eventsCreated),
+    eventsAttending: extractIds(this.eventsAttending),
+    savedEvents: extractIds(this.savedEvents),
+    followers: extractIds(this.followers),
+    following: extractIds(this.following),
     createdAt: this.createdAt,
   };
 };
