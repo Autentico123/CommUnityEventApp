@@ -18,7 +18,7 @@ const getApiUrl = () => {
   // Find your IP:
   //   Windows: ipconfig
   //   Mac/Linux: ifconfig or ip addr
-  const PHYSICAL_DEVICE = "http://192.168.1.100:5000/api"; // UPDATE THIS!
+  const PHYSICAL_DEVICE = "http://10.0.9.105:5000/api";
 
   // 4. Production (when you deploy)
   const PRODUCTION = "https://your-backend.herokuapp.com/api"; // UPDATE THIS!
@@ -26,13 +26,13 @@ const getApiUrl = () => {
   // CHOOSE YOUR ENVIRONMENT:
   // Uncomment the line that matches your setup:
 
-  return LOCAL; // ← Default: localhost
+  return PHYSICAL_DEVICE; // ← Default: localhost
   // return ANDROID_EMULATOR;      // ← Uncomment for Android Emulator
   // return PHYSICAL_DEVICE;       // ← Uncomment for physical device
   // return PRODUCTION;            // ← Uncomment for production
 };
 
-export const API_URL = getApiUrl();
+export const API_URL = "http://192.168.137.1:5000/api";
 
 // API Configuration
 export const API_CONFIG = {

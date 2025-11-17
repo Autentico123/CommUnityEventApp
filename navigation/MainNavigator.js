@@ -13,6 +13,7 @@ import CreateEventScreen from "../screens/CreateEventScreen";
 import EventDetailsScreen from "../screens/EventDetailsScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import AboutScreen from '../screens/AboutScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -130,6 +131,17 @@ function MainTabNavigator() {
           ),
         }}
       />
+
+      <Tab.Screen
+  name="About"
+  component={AboutScreen}
+  options={{
+    tabBarLabel: 'About',
+    tabBarIcon: ({ color, size }) => (
+      <Ionicons name="information-circle-outline" size={size} color={color} />
+    ),
+  }}
+/>
     </Tab.Navigator>
   );
 }

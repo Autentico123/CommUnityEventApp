@@ -110,6 +110,7 @@ export default function ProfileScreen() {
           <Text style={styles.statLabel}>Events Joined</Text>
         </TouchableOpacity>
         <View style={styles.statDivider} />
+
         <TouchableOpacity style={styles.statItem}>
           <View
             style={[
@@ -124,6 +125,7 @@ export default function ProfileScreen() {
           </Text>
           <Text style={styles.statLabel}>Created</Text>
         </TouchableOpacity>
+        
         <View style={styles.statDivider} />
         <TouchableOpacity style={styles.statItem}>
           <View
@@ -135,6 +137,18 @@ export default function ProfileScreen() {
           <Text style={styles.statLabel}>Followers</Text>
         </TouchableOpacity>
       </View>
+
+<TouchableOpacity
+  style={styles.settingItem}
+  onPress={() => navigation.navigate('About')}
+>
+  <View style={styles.settingLeft}>
+    <Ionicons name="information-circle-outline" size={24} color="#9333EA" />
+    <Text style={styles.settingText}>About CommUnity</Text>
+  </View>
+  <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+</TouchableOpacity>
+
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recent Activity</Text>
