@@ -29,6 +29,7 @@ import GroupDetailScreen from "../screens/GroupDetailScreen";
 import PeopleScreen from "../screens/PeopleScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 import MapViewScreen from "../screens/MapViewScreen";
+import AboutUsScreen from "../screens/AboutUsScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -98,6 +99,7 @@ function ProfileStackNavigator() {
     >
       <Stack.Screen name="ProfileMain" component={ProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="AboutUs" component={AboutUsScreen} />
     </Stack.Navigator>
   );
 }

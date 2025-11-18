@@ -93,6 +93,10 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+  const handleAboutUs = () => {
+    navigation.navigate("AboutUs");
+  };
+
   const menuItems = [
     {
       icon: "heart",
@@ -126,6 +130,12 @@ export default function ProfileScreen({ navigation }) {
       label: "Help & Support",
       color: colors.primary,
       onPress: handleHelp,
+    },
+    {
+      icon: "information-circle",
+      label: "About Us",
+      color: colors.secondary,
+      onPress: handleAboutUs,
     },
   ];
 
@@ -500,7 +510,9 @@ export default function ProfileScreen({ navigation }) {
             color="#FF6B6B"
             style={styles.buttonIcon}
           />
-          <Text style={[styles.secondaryButtonText, {color: "#FF6B6B"}]}>Logout</Text>
+          <Text style={[styles.secondaryButtonText, { color: "#FF6B6B" }]}>
+            Logout
+          </Text>
         </TouchableOpacity>
       </Animated.View>
 
