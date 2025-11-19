@@ -18,7 +18,8 @@ const getApiUrl = () => {
   // Find your IP:
   //   Windows: ipconfig
   //   Mac/Linux: ifconfig or ip addr
-  const PHYSICAL_DEVICE = "http://192.168.1.12:5000/api"; // UPDATE THIS!
+  const PHYSICAL_DEVICE = "http://10.0.1.63:5000/api"; // UPDATE THIS!
+
 
   // 4. Production (when you deploy)
   const PRODUCTION = "https://your-backend.herokuapp.com/api"; // UPDATE THIS!

@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; 
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -8,30 +8,27 @@ import MainNavigator from "./navigation/MainNavigator";
 import { EventProvider } from "./context/EventContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ChatProvider } from "./context/ChatContext";
-import { NotificationProvider } from "./context/NotificationContext";
+// import { NotificationProvider } from "./context/NotificationContext"; // removed for Expo Go
 import { GroupProvider } from "./context/GroupContext";
 import { toastConfig } from "./config/toastConfig";
 import { colors } from "./theme";
-// must be color Brown
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthProvider>
-          <NotificationProvider>
-            <ChatProvider>
-              <GroupProvider>
-                <EventProvider>
-                  <NavigationContainer>
-                    <MainNavigator />
-                    <StatusBar style="light" backgroundColor={colors.primary} />
-                  </NavigationContainer>
-                  <Toast config={toastConfig} />
-                </EventProvider>
-              </GroupProvider>
-            </ChatProvider>
-          </NotificationProvider>
+          <ChatProvider>
+            <GroupProvider>
+              <EventProvider>
+                <NavigationContainer>
+                  <MainNavigator />
+                  <StatusBar style="light" backgroundColor={colors.primary} />
+                </NavigationContainer>
+                <Toast config={toastConfig} />
+              </EventProvider>
+            </GroupProvider>
+          </ChatProvider>
         </AuthProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
