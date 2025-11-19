@@ -32,7 +32,7 @@ export default function AboutUsScreen({ navigation }) {
         avatar: null, // Use: require('../assets/member2.jpg')
       },
       {
-        name: "Name 3",
+        name: "Rezamae L.Quinlog",
 
         avatar: null, // Use: require('../assets/member3.jpg')
       },
