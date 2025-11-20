@@ -42,9 +42,9 @@ export default function AboutUsScreen({ navigation }) {
         avatar: null, // Use: require('../assets/member4.jpg')
       },
       {
-        name: "Name 5",
+        name: "Daisy Joy B. Cutamora",
 
-        avatar: null, // Use: require('../assets/member5.jpg')
+        avatar: require('../assets/member5.jpg')
       },
       {
         name: "Name 6",
