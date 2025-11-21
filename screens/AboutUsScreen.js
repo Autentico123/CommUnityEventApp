@@ -27,9 +27,9 @@ export default function AboutUsScreen({ navigation }) {
         avatar: null, // Use: require('../assets/member1.jpg')
       },
       {
-        name: "Name 2",
+        name: "Ma. Janen C. Autentico",
 
-        avatar: null, // Use: require('../assets/member2.jpg')
+        avatar: require('../assets/member2.jpg'),
       },
       {
         name: "Rezamae L.Quinlog",

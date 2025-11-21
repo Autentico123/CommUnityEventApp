@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; 
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -12,7 +12,6 @@ import { ChatProvider } from "./context/ChatContext";
 import { GroupProvider } from "./context/GroupContext";
 import { toastConfig } from "./config/toastConfig";
 import { colors } from "./theme";
-// must be color Brown
 
 export default function App() {
   return (
