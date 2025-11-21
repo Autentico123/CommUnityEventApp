@@ -11,7 +11,7 @@ const getApiUrl = () => {
 
   // 2. Android Emulator
   // Android emulator requires special IP to access host machine
-  const ANDROID_EMULATOR = "http://10.0.2.2:5000/api";
+  const API_URL = "http://10.0.1.63:5000/api";
 
   // 3. Physical Device / iOS Simulator on different machine
   // Replace with your computer's local IP address
@@ -20,9 +20,9 @@ const getApiUrl = () => {
   //   Mac/Linux: ifconfig or ip addr
   const PHYSICAL_DEVICE = "http://10.0.1.63:5000/api"; // UPDATE THIS!
 
-
   // 4. Production (when you deploy)
-  const PRODUCTION = "https://your-backend.herokuapp.com/api"; // UPDATE THIS!
+  // After deploying to Render, replace with your actual URL
+  const PRODUCTION = "https://communityeventapp-backend.onrender.com/api"; // UPDATE THIS!
 
   // CHOOSE YOUR ENVIRONMENT:
   // Uncomment the line that matches your setup:
@@ -30,7 +30,7 @@ const getApiUrl = () => {
   return PHYSICAL_DEVICE; // ← Default: localhost
   // return ANDROID_EMULATOR;      // ← Uncomment for Android Emulator
   // return PHYSICAL_DEVICE;       // ← Uncomment for physical device
-  // return PRODUCTION;            // ← Uncomment for production
+  // return PRODUCTION;            // ← Uncomment for production deployment
 };
 
 export const API_URL = getApiUrl();
