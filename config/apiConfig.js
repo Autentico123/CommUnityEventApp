@@ -21,7 +21,8 @@ const getApiUrl = () => {
   const PHYSICAL_DEVICE = "http://192.168.1.12:5000/api"; // UPDATE THIS!
 
   // 4. Production (when you deploy)
-  const PRODUCTION = "https://your-backend.herokuapp.com/api"; // UPDATE THIS!
+  // After deploying to Render, replace with your actual URL
+  const PRODUCTION = "https://communityeventapp-backend.onrender.com/api"; // UPDATE THIS!
 
   // CHOOSE YOUR ENVIRONMENT:
   // Uncomment the line that matches your setup:
@@ -29,7 +30,7 @@ const getApiUrl = () => {
   return PHYSICAL_DEVICE; // ← Default: localhost
   // return ANDROID_EMULATOR;      // ← Uncomment for Android Emulator
   // return PHYSICAL_DEVICE;       // ← Uncomment for physical device
-  // return PRODUCTION;            // ← Uncomment for production
+  // return PRODUCTION;            // ← Uncomment for production deployment
 };
 
 export const API_URL = getApiUrl();
