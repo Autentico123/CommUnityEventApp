@@ -8,7 +8,7 @@ import MainNavigator from "./navigation/MainNavigator";
 import { EventProvider } from "./context/EventContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ChatProvider } from "./context/ChatContext";
-import { NotificationProvider } from "./context/NotificationContext";
+//import { NotificationProvider } from "./context/NotificationContext";
 import { GroupProvider } from "./context/GroupContext";
 import { toastConfig } from "./config/toastConfig";
 import { colors } from "./theme";
@@ -19,7 +19,7 @@ export default function App() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthProvider>
-          <NotificationProvider>
+          
             <ChatProvider>
               <GroupProvider>
                 <EventProvider>
@@ -31,7 +31,7 @@ export default function App() {
                 </EventProvider>
               </GroupProvider>
             </ChatProvider>
-          </NotificationProvider>
+          
         </AuthProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
