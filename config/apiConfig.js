@@ -11,14 +11,14 @@ const getApiUrl = () => {
 
   // 2. Android Emulator
   // Android emulator requires special IP to access host machine
-  const ANDROID_EMULATOR = "http://10.0.2.2:5000/api";
+  const API_URL = "http://10.0.1.63:5000/api";
 
   // 3. Physical Device / iOS Simulator on different machine
   // Replace with your computer's local IP address
   // Find your IP:
   //   Windows: ipconfig
   //   Mac/Linux: ifconfig or ip addr
-  const PHYSICAL_DEVICE = "http://192.168.1.12:5000/api"; // UPDATE THIS!
+  const PHYSICAL_DEVICE = "http://10.0.1.63:5000/api"; // UPDATE THIS!
 
   // 4. Production (when you deploy)
   // After deploying to Render, replace with your actual URL
